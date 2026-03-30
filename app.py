@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-from tasks import tasks_details, random_code
+from tasks import tasks_details
+
 
 st.set_page_config(page_title="PSD - Lista X", page_icon="🤓", layout="wide")
 
@@ -20,10 +21,8 @@ if zadanie:
     st.header(details["title"])
     st.info(details["description"])
 
-    results = details["func"]() if "func" in details else ["Brak funkcji do wykonania"]
-
-    n_results = len(results)
-    col = st.columns(n_results if n_results <= 3 else 3)
-    for i, res in enumerate(results):
-        with col[i % 3]:
-            st.metric(label=f"Wynik {i+1}", value=res)
+    results = (
+        details["func"]()
+        if "func" in details
+        else st.warning("Brak funkcji do wykonania")
+    )
