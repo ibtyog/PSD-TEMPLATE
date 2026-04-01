@@ -22,8 +22,4 @@ if zadanie:
 
     results = details["func"]() if "func" in details else ["Brak funkcji do wykonania"]
 
-    n_results = len(results)
-    col = st.columns(n_results if n_results <= 3 else 3)
-    for i, res in enumerate(results):
-        with col[i % 3]:
-            st.metric(label=f"Wynik {i+1}", value=res)
+
