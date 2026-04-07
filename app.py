@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import streamlit as st
 from tasks import tasks_details, random_code
 
-st.set_page_config(page_title="PSD - Lista X", page_icon="🤓", layout="wide")
+st.set_page_config(page_title="PSD - Lista 4", page_icon="🤓", layout="wide")
 
-st.title("PSD - Lista X")
+st.title("PSD - Lista 4")
 
 with st.sidebar:
     st.subheader("Wybór zadania")
