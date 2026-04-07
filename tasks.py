@@ -98,7 +98,7 @@ def zadanie_2():
     st.divider()
 
     t = np.arange(0, 3, 0.001)
-    fs = 1 / 0.001
+    dt = t[1] - t[0]
 
     signal = None
 
@@ -130,26 +130,18 @@ def zadanie_2():
 
     if signal is not None:
         n = len(signal)
-        lags = np.arange(-n + 1, n)
-        rxx = []
+        n_full = 2 * n - 1  
 
-        for lag in lags:
-            if lag < 0:
-                rxx.append(np.sum(signal[: n + lag] * signal[-lag:]) / n)
-            else:
-                rxx.append(np.sum(signal[lag:] * signal[: n - lag]) / n)
+        autocorr = np.correlate(signal, signal, mode='full') / n
+        
+        psd_wiener = np.abs(np.fft.fft(np.fft.ifftshift(autocorr))) * dt
 
-        rxx = np.array(rxx)
+        freqs = np.fft.fftfreq(n_full, d=dt)
 
-        M = len(rxx)
-        freqs = np.linspace(0, fs / 2, 100)
-        sxx = []
-        tau = lags / fs
-
-        for f in freqs:
-            exponent = np.exp(-1j * 2 * np.pi * f * tau)
-            integral_approx = np.sum(rxx * exponent)
-            sxx.append(np.abs(integral_approx))
+        pos_mask = freqs >= 0
+        freqs_pos = freqs[pos_mask]
+        psd_wiener_pos = psd_wiener[pos_mask]
+       
 
         col = st.columns(2)
         with col[0]:
@@ -163,9 +155,8 @@ def zadanie_2():
         with col[1]:
             fig, ax = plt.subplots()
 
-            sxx = np.array(sxx)
 
-            ax.plot(freqs, sxx)
+            ax.plot(freqs_pos, psd_wiener_pos)
             ax.set_title("WGM z definicji")
             ax.set_xlabel("Częstotliwość (Hz)")
             ax.set_ylabel("Gęstość mocy")
@@ -189,6 +180,7 @@ def zadanie_3():
     st.divider()
 
     t = np.arange(0, 3, 0.001)
+    dt = t[1] - t[0]
     fs = 1 / 0.001
 
     signal = None
@@ -224,28 +216,17 @@ def zadanie_3():
         f_welch, Pxx_welch = welch(signal, fs=fs)
 
         n = len(signal)
-        lags = np.arange(-n + 1, n)
-        rxx = []
+        n_full = 2 * n - 1  
 
-        for lag in lags:
-            if lag < 0:
-                rxx.append(np.sum(signal[: n + lag] * signal[-lag:]) / n)
-            else:
-                rxx.append(np.sum(signal[lag:] * signal[: n - lag]) / n)
+        autocorr = np.correlate(signal, signal, mode='full') / n
+        
+        psd_wiener = np.abs(np.fft.fft(np.fft.ifftshift(autocorr))) * dt
 
-        rxx = np.array(rxx)
-        M = len(rxx)
+        freqs = np.fft.fftfreq(n_full, d=dt)
 
-        freqs_manual = np.linspace(0, 60, 200)
-        sxx_manual = []
-        tau = lags / fs
-
-        for f in freqs_manual:
-            exponent = np.exp(-1j * 2 * np.pi * f * tau)
-            integral_approx = np.sum(rxx * exponent)
-            sxx_manual.append(np.abs(integral_approx))
-
-        sxx_manual = np.array(sxx_manual)
+        pos_mask = freqs >= 0
+        freqs_pos = freqs[pos_mask]
+        psd_wiener_pos = psd_wiener[pos_mask]
 
         fig, axs = plt.subplots(2, 2, figsize=(12, 8))
 
@@ -260,7 +241,7 @@ def zadanie_3():
 
         with col[1]:
             fig, ax = plt.subplots()
-            ax.plot(freqs_manual, sxx_manual)
+            ax.plot(freqs_pos, psd_wiener_pos)
             ax.set_title("WGM z definicji")
             ax.set_xlabel("Częstotliwość (Hz)")
             ax.set_ylabel("Gęstość mocy")
