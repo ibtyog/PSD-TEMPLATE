@@ -49,7 +49,7 @@ def task_1():
 
     yf_db = 20 * np.log10(yf_abs / np.max(yf_abs) + 1e-10)
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c4, c3 = st.columns(4)
 
     with c1:
         fig1, ax1 = plt.subplots(figsize=(5, 5))
@@ -67,9 +67,29 @@ def task_1():
         ax2.set_xlabel("Czas [s]")
         st.pyplot(fig2)
 
+    with c4:
+        yf_win = scipy.fft.fft(window, n=N_fft)
+        
+        yf_win_shifted = scipy.fft.fftshift(yf_win)
+        
+        xf_win = scipy.fft.fftshift(scipy.fft.fftfreq(N_fft))
+        
+        yf_win_abs = np.abs(yf_win_shifted)
+        yf_win_db = 20 * np.log10(yf_win_abs / np.max(yf_win_abs) + 1e-10)
+
+        fig4, ax4 = plt.subplots(figsize=(5, 5.1))
+        fig4.suptitle("Widmo okna")
+        ax4.plot(xf_win, yf_win_db, color="red")
+        ax4.set_xlim(-0.5, 0.5)
+        ax4.set_ylim(-100, 5)
+        ax4.set_xlabel("Znormalizowana częstotliwość")
+        ax4.set_ylabel("Amplituda [dB]")
+        ax4.grid(True, alpha=0.3)
+        st.pyplot(fig4)
+
     with c3:
         fig3, ax3 = plt.subplots(figsize=(5, 5.1))
-        fig3.suptitle(f"Widmo amplitudowe")
+        fig3.suptitle("Widmo zokienkowanego sygnału")
         ax3.plot(xf_pos, yf_db, color="green")
         ax3.set_xlim(0, sampling_rate / 2)
         ax3.set_ylim(-100, 5)
@@ -77,6 +97,8 @@ def task_1():
         ax3.set_ylabel("Amplituda [dB]")
         ax3.grid(True, alpha=0.3)
         st.pyplot(fig3)
+
+
 
 
 def task_2():
